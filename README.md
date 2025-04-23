@@ -1,5 +1,4 @@
-# char-select-zoe
-A widdle mod i am developing to start my journey of lua coding
+# [CS] HASTE: Zoe
 
 Moveset/Character mod that tries to recreate Zoe from the game HASTE by Landfall games. this moveset features:
 
