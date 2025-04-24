@@ -198,7 +198,10 @@ local function launch_loop(m)
         if m.vel.y < 60 then m.vel.y = 60 end
         if m.vel.y > 60 then m.vel.y = 60 end
     end
-
+	
+	if m.vel.y < 0 then
+		m.vel.y = m.vel.y + 2.5
+	end
     m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 700)
     m.vel.x = sins(m.faceAngle.y) * m.forwardVel
     m.vel.z = coss(m.faceAngle.y) * m.forwardVel
@@ -229,11 +232,7 @@ local function launch_loop(m)
     m.actionTimer = m.actionTimer + 1
 end
 
-hook_mario_action(ACT_LAUNCH_JUMP, {every_frame = launch_loop, gravity = launch_gravity})
---@param m MarioState
-local function launch_gravity(m)
-    m.vel.y = m.vel.y - 2.5
-end
+hook_mario_action(ACT_LAUNCH_JUMP, {every_frame = launch_loop, gravity = nil})
 
 --@param m MarioState
 local function falling_down(m)
@@ -241,7 +240,9 @@ local function falling_down(m)
         m.vel.y = -5
         set_mario_animation(m, CHAR_ANIM_FLY_FROM_CANNON)
     end
-
+if m.vel.y < 0 then
+    m.vel.y = m.vel.y + 1.5
+end
     m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 700)
     m.vel.x = sins(m.faceAngle.y) * m.forwardVel
     m.vel.z = coss(m.faceAngle.y) * m.forwardVel
@@ -268,7 +269,7 @@ local function falling_down(m)
     m.actionTimer = m.actionTimer + 1
 end
 
-hook_mario_action(ACT_FALL_LAUNCH, {every_frame = falling_down, gravity = launch_gravity})
+hook_mario_action(ACT_FALL_LAUNCH, {every_frame = falling_down, gravity = nil})
 
 --@param m MarioState
 local function dive_down(m)
@@ -310,6 +311,8 @@ local function swim_drill(m)
         set_mario_action(m, ACT_WATER_IDLE, 0)
     end
 end
+hook_mario_action(ACT_SWIM_DRILL, swim_drill)
+
 --@param m MarioState
 local function zoe_does_things (m)
     if energy > 100 then energy = 100 end
