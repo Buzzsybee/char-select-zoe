@@ -1,4 +1,4 @@
-# [CS] HASTE: Zoe
+# [CS] Zoe the Courier
 
 Moveset/Character mod that tries to recreate Zoe from the game HASTE by Landfall games. this moveset features:
 
