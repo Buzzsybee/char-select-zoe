@@ -19,7 +19,7 @@ ACT_SWIM_DRILL = allocate_mario_action(ACT_GROUP_SUBMERGED | ACT_FLAG_SWIMMING |
 local function zoe_running_start_loop(m)
     set_mario_animation(m, CHAR_ANIM_SKID_ON_GROUND)
     chargedSpeed = chargedSpeed + 6
-    if chargedSpeed > 70  then chargedSpeed = 70 end
+    if chargedSpeed > 90  then chargedSpeed = 90 end
     if m.controller.buttonDown & Z_TRIG == 0 then
         set_mario_action(m, ACT_DASHING, 0)
         curSpeed = chargedSpeed
@@ -232,14 +232,28 @@ hook_mario_action(ACT_DIVE_DOWN, {every_frame = dive_down, gravity = nil})
 
 --@param m MarioState
 local function swim_drill(m)
-    mario_set_forward_vel(m, 100)
+    mario_set_forward_vel(m, 120)
     set_mario_animation(m, CHAR_ANIM_DIVE)
 
     perform_water_step(m)
-    m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 1000)
+    m.faceAngle.z = m.faceAngle.z + 10000
+    m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.controller.stickX, m.controller.stickX) 
     m.vel.x = sins(m.faceAngle.y) * m.forwardVel
     m.vel.z = coss(m.faceAngle.y) * m.forwardVel
 
+    if m.controller.stickY > 0 then
+       m.faceAngle.x = approach_s16_symmetric(m.faceAngle.x, -10000, 1000)
+       m.vel.y = m.vel.y - 6
+    elseif m.controller.stickY < 0 then
+        m.faceAngle.x = approach_s16_symmetric(m.faceAngle.x, 10000, 1000)
+        m.vel.y = m.vel.y + 6
+    
+    end
+    if m.controller.stickY == 0 then
+        m.vel.y = 0
+        m.faceAngle.x = approach_s16_symmetric(m.faceAngle.x, 0, 1000)
+    else return
+    end
     if m.controller.buttonDown & Z_TRIG == 0 then
         set_mario_action(m, ACT_WATER_IDLE, 0)
     end
