@@ -89,7 +89,7 @@ hook_mario_action(ACT_BOARD_AIR, board_loop_air)
 local function dash_loop(m)
     mario_set_forward_vel(m, curSpeed)
     if curSpeed >= 120 then curSpeed = 120 end
-    set_mario_animation(m, CHAR_ANIM_RUNNING)
+    set_mario_anim_with_accel(m, CHAR_ANIM_RUNNING_UNUSED, m.forwardVel * 9000)
 
     local stepResult = perform_ground_step(m)
 
@@ -117,7 +117,7 @@ local function dash_loop(m)
     if m.controller.buttonDown & Y_BUTTON ~= 0 then
         set_mario_action(m, ACT_BOARD, 0)
     end
-
+    play_step_sound(m, 1, 30)
     chargedSpeed =0
 end
 
@@ -173,9 +173,6 @@ local function falling_down(m)
         m.vel.y = -5
         set_mario_animation(m, CHAR_ANIM_FLY_FROM_CANNON)
     end
-if m.vel.y < 0 then
-    m.vel.y = m.vel.y + 1.5
-end
     m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 700)
     m.vel.x = sins(m.faceAngle.y) * m.forwardVel
     m.vel.z = coss(m.faceAngle.y) * m.forwardVel
@@ -209,6 +206,7 @@ local function dive_down(m)
     if m.actionTimer > 0 then
         set_mario_animation(m, CHAR_ANIM_SWIM_PART2)
         m.vel.y = m.vel.y - 10
+        m.faceAngle.x = approach_s16_symmetric(m.faceAngle.x, -5000, 2000)
     end
 
     m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 700)
@@ -224,7 +222,7 @@ local function dive_down(m)
 
     if (m.controller.buttonDown & A_BUTTON) == 0 then
         m.actionTimer = 0
-        set_mario_action(m, ACT_FALL_LAUNCH, 0)
+        set_mario_action(m, ACT_VERTICAL_WIND, 0)
     end
 end
 
